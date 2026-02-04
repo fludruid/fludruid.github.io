@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generative Art Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=Orbitron:wght@700;900&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --fg: #fafafa;
+            --accent: #0FF2AA;
+            --accent-yellow: #F4C10E;
+            --accent-red: #952124;
+            --grey: #666666;
+            --spacing-unit: 1.5rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Jost', sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Skip to content for accessibility */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--accent);
+            color: var(--bg);
+            padding: 8px;
+            text-decoration: none;
+            z-index: 100;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: var(--spacing-unit);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            animation: slideDown 0.8s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            text-transform: uppercase;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: var(--fg);
+            text-decoration: none;
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
+            position: relative;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after,
+        nav a:focus::after {
+            width: 100%;
+        }
+
+        nav a:hover,
+        nav a:focus {
+            color: var(--accent);
+            outline: none;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            background: var(--bg);
+            /* Ensure base background matches */
+        }
+
+        .hero-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        /* The layer that creates the cutout effect */
+        .hero-cutout {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: var(--bg);
+            /* The "solid" part of the mask */
+            mix-blend-mode: multiply;
+            /* Key: white text becomes transparent, bg stays solid */
+            z-index: 2;
+            padding: 0 var(--spacing-unit);
+        }
+
+        /* Styling for the cutout text */
+        .hero-cutout h1 {
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2.5rem, 8vw, 6rem);
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+
+            margin: 0;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            /* Ensure text centering works */
+        }
+
+        /* The layer for UI elements like subtitle and buttons */
+        .hero-ui {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Remove flex column centering that causes shifting */
+            display: block;
+            z-index: 3;
+            padding: 0 var(--spacing-unit);
+            pointer-events: none;
+            /* Let clicks pass through to video/body if needed, though mostly blocked by layers */
+        }
+
+        .hero-ui>* {
+            pointer-events: auto;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            width: 100%;
+            /* Ensure text wrapping works if needed */
+        }
+
+        /* Invisible spacer converted to Outline Layer */
+        .invisible-spacer {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2.5rem, 8vw, 6rem);
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+
+            /* Make visible but transparent fill, so we only see the stroke */
+            visibility: visible;
+            color: transparent;
+            -webkit-text-stroke: 2px white;
+
+            margin: 0;
+            /* Exactly center */
+        }
+
+        /* Remove spacer-gap as we use absolute offsets now */
+        .spacer-gap {
+            display: none;
+        }
+
+        /* Original h1 styling removed here as it's split.
+           Keeping animations generally but needs care with split elements. */
+
+        /* Styling for the cutout text */
+        .hero-cutout h1 {
+            color: white;
+            /* White pixels * Video pixels = Video pixels visible */
+            margin: 0;
+            /* Reset margins for precise alignment */
+            /* Inherit other font properties */
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2.5rem, 8vw, 6rem);
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            animation: fadeInUp 1s ease 0.2s backwards;
+        }
+
+        .subtitle {
+            font-size: clamp(1rem, 2vw, 1.4rem);
+            color: white;
+            font-weight: 300;
+            letter-spacing: 0.05em;
+            animation: fadeInUp 1s ease 0.4s backwards;
+            /* Offset downwards from center */
+            margin-top: 10rem;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cta {
+            margin-top: 16rem;
+            /* Offset further downwards */
+            display: inline-block;
+            width: auto;
+            /* Override wide width */
+
+            padding: 1rem 3rem;
+            background: linear-gradient(90deg,
+                    var(--accent-red),
+                    var(--accent-yellow),
+                    var(--accent),
+                    var(--accent-red),
+                    var(--accent-yellow));
+            background-size: 400% 100%;
+
+            border: none;
+            border-radius: 4px;
+            /* Slight rounding for modern look */
+            color: #0a0a0a;
+            /* Dark text for contrast */
+            text-decoration: none;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            animation:
+                fadeInUp 1s ease 0.6s backwards,
+                gradientSlide 4s linear infinite;
+        }
+
+        @keyframes gradientSlide {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            100% {
+                background-position: 100% 50%;
+            }
+        }
+
+        /* Removed old ::before sliding bg effect as the main bg is now animated */
+        .cta::before {
+            display: none;
+        }
+
+        .cta:hover,
+        .cta:focus {
+            transform: translate(-50%, -50%) scale(1.05);
+            /* Account for absolute centering offset */
+            outline: none;
+            box-shadow: 0 0 30px rgba(15, 242, 170, 0.4);
+        }
+
+        /* Main content sections */
+        section {
+            min-height: 100vh;
+            padding: 8rem var(--spacing-unit) 4rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Adjust hero section specific padding override */
+        section.hero {
+            padding: 0;
+            max-width: none;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: 4rem;
+            letter-spacing: 0.05em;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        h2.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            aspect-ratio: 1;
+            overflow: hidden;
+            background: #111;
+            cursor: pointer;
+            opacity: 1;
+            /* force visibility for Opera GX */
+            transform: none;
+            transition: all 0.6s ease;
+        }
+
+        .gallery-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .gallery-item img,
+        .gallery-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease, filter 0.6s ease;
+            filter: grayscale(0.3);
+        }
+
+        .gallery-item:hover img,
+        .gallery-item:focus img,
+        .gallery-item:hover video,
+        .gallery-item:focus video {
+            transform: scale(1.05);
+            filter: grayscale(0);
+        }
+
+        .gallery-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, transparent 60%, rgba(0, 0, 0, 0.8));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .gallery-item:hover::after,
+        .gallery-item:focus::after {
+            opacity: 1;
+        }
+
+        .item-title {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 1.5rem;
+            color: var(--fg);
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            z-index: 2;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.4s ease;
+        }
+
+        .gallery-item:hover .item-title,
+        .gallery-item:focus .item-title {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .gallery-item:focus {
+            outline: 2px solid var(--accent);
+            outline-offset: 4px;
+        }
+
+        /* About Section */
+        .about-intro {
+            max-width: 800px;
+            margin: 0 auto 4rem;
+            text-align: center;
+            font-size: 1.2rem;
+            line-height: 1.8;
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.8s ease;
+        }
+
+        .about-intro.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .about-intro p {
+            color: var(--grey);
+        }
+
+        .vent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .vent-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 2.5rem 2rem;
+            transition: all 0.4s ease;
+            opacity: 1;
+            transform: translateY(0);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vent-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(15, 242, 170, 0.03), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .vent-card:hover::before,
+        .vent-card:focus::before {
+            left: 100%;
+        }
+
+        .vent-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .vent-card:hover,
+        .vent-card:focus {
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.04);
+            transform: translateY(-8px);
+            box-shadow: 0 8px 30px rgba(0, 255, 204, 0.1);
+            outline: none;
+        }
+
+        .vent-letter {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--accent);
+            line-height: 1;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+            transition: all 0.4s ease;
+        }
+
+        .vent-card:hover .vent-letter,
+        .vent-card:focus .vent-letter {
+            opacity: 1;
+            transform: scale(1.1);
+            color: var(--accent-yellow);
+        }
+
+        .vent-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .vent-etymology {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .etymology-label {
+            color: var(--accent);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.75rem;
+        }
+
+        .etymology-text {
+            display: block;
+            color: var(--grey);
+            margin-top: 0.25rem;
+            font-style: italic;
+        }
+
+        .etymology-text em {
+            color: var(--fg);
+            font-style: italic;
+        }
+
+        .vent-definition {
+            color: var(--grey);
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+
+        .about-closing {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.8s ease;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .about-closing.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .about-closing p {
+            color: var(--grey);
+        }
+
+        /* Contact Section */
+        .contact-content {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .contact-content.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .contact-link {
+            color: var(--fg);
+            text-decoration: none;
+            font-size: 1.1rem;
+            letter-spacing: 0.05em;
+            padding: 0.5rem 0;
+            position: relative;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .contact-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: var(--accent);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .contact-link:hover::after,
+        .contact-link:focus::after {
+            transform: scaleX(1);
+        }
+
+        .contact-link:hover,
+        .contact-link:focus {
+            color: var(--accent);
+            outline: none;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem var(--spacing-unit);
+            color: var(--grey);
+            font-size: 0.9rem;
+            border-top: 1px solid #222;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav ul {
+                gap: 1rem;
+            }
+
+            nav a {
+                font-size: 0.85rem;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
+
+        /* Accessibility - Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            html {
+                scroll-behavior: auto;
+            }
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            :root {
+                --bg: #000000;
+                --fg: #ffffff;
+                --accent: #00ffcc;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header role="banner">
+        <div class="logo" aria-label="Site logo">fludruid</div>
+        <nav role="navigation" aria-label="Main navigation">
+            <ul>
+                <li><a href="#work">Work</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main id="main-content">
+        <section class="hero" aria-labelledby="hero-title">
+            <video class="hero-video" autoplay loop muted playsinline preload="metadata">
+                <source src="/videos/work3.mp4" type="video/mp4">
+            </video>
+
+            <!-- Cutout Layer: Hides video everywhere except the text -->
+            <div class="hero-cutout">
+                <h1 id="hero-title">fludruid</h1>
+            </div>
+
+            <!-- UI Layer: Standard elements on top -->
+            <div class="hero-ui">
+                <!-- Spacer to ensure subtitle/CTA are pushed down correctly relative to the centered h1 -->
+                <div class="invisible-spacer">fludruid</div>
+                <div class="spacer-gap"></div>
+                <p class="subtitle">Real-time visual systems crafted in TouchDesigner</p>
+                <a href="#work" class="cta" aria-label="View portfolio work">Explore Work</a>
+            </div>
+        </section>
+
+        <section id="work" aria-labelledby="work-title">
+            <h2 id="work-title">Selected Work</h2>
+            <div class="gallery-grid" role="list">
+                <article class="gallery-item" tabindex="0">
+                    <video autoplay loop muted playsinline preload="metadata">
+                        <source src="/videos/work1.mp4" type="video/mp4">
+                    </video>
+                    <span class="item-title">TESSELLATION</span>
+                </article>
+
+                <article class="gallery-item" tabindex="0">
+                    <video autoplay loop muted playsinline preload="metadata">
+                        <source src="/videos/work2.mp4" type="video/mp4">
+                    </video>
+                    <span class="item-title">TUNNEL</span>
+                </article>
+
+                <article class="gallery-item" tabindex="0">
+                    <video autoplay loop muted playsinline preload="metadata">
+                        <source src="/videos/work3.mp4" type="video/mp4">
+                    </video>
+                    <span class="item-title">UNDULATION</span>
+                </article>
+
+                <article class="gallery-item" tabindex="0">
+                    <video autoplay loop muted playsinline preload="metadata">
+                        <source src="/videos/work4.mp4" type="video/mp4">
+                    </video>
+                    <span class="item-title">Work 4</span>
+                </article>
+
+                <article class="gallery-item" tabindex="0">
+                    <video autoplay loop muted playsinline preload="metadata">
+                        <source src="/videos/work5.mp4" type="video/mp4">
+                    </video>
+                    <span class="item-title">Work 5</span>
+                </article>
+
+                <article class="gallery-item" tabindex="0">
+                    <video autoplay loop muted playsinline preload="metadata">
+                        <source src="/videos/work6.mp4" type="video/mp4">
+                    </video>
+                    <span class="item-title">Work 6</span>
+                </article>
+
+                <article class="gallery-item" tabindex="0">
+                    <video autoplay loop muted playsinline preload="metadata">
+                        <source src="/videos/work7.mp4" type="video/mp4">
+                    </video>
+                    <span class="item-title">Work 7</span>
+                </article>
+
+                <article class="gallery-item" tabindex="0">
+                    <video autoplay loop muted playsinline preload="metadata">
+                        <source src="/videos/work8.mp4" type="video/mp4">
+                    </video>
+                    <span class="item-title">Work 8</span>
+                </article>
+            </div>
+        </section>
+
+        <section id="about" aria-labelledby="about-title">
+            <h2 id="about-title">Philosophy</h2>
+            <div class="about-intro">
+                <p>My work strongly resonates with 4 core values - a framework I call VENT.</p>
+            </div>
+            <div class="vent-grid">
+                <article class="vent-card" tabindex="0">
+                    <div class="vent-letter">V</div>
+                    <h3 class="vent-title">Vitality</h3>
+                    <div class="vent-etymology">
+                        <span class="etymology-label">Etymology:</span>
+                        <span class="etymology-text">Latin <em>vitalis</em> - of life, vital</span>
+                    </div>
+                    <p class="vent-definition">Life force in motion. Systems that breathe, pulse, and evolve. My
+                        generative work channels the organic unpredictability of living systems - embracing emergence
+                        over control, letting algorithms find their own rhythm.</p>
+                </article>
+
+                <article class="vent-card" tabindex="0">
+                    <div class="vent-letter">E</div>
+                    <h3 class="vent-title">Expression</h3>
+                    <div class="vent-etymology">
+                        <span class="etymology-label">Etymology:</span>
+                        <span class="etymology-text">Latin <em>expressare</em> - to press out, represent</span>
+                    </div>
+                    <p class="vent-definition">Authenticity made visible. Code as language, visuals as voice. Each piece
+                        is an act of pressing internal visions outward - transforming abstract thought into tangible,
+                        experiential reality without compromise.</p>
+                </article>
+
+                <article class="vent-card" tabindex="0">
+                    <div class="vent-letter">N</div>
+                    <h3 class="vent-title">Novelty</h3>
+                    <div class="vent-etymology">
+                        <span class="etymology-label">Etymology:</span>
+                        <span class="etymology-text">Latin <em>novus</em> - new, fresh, unusual</span>
+                    </div>
+                    <p class="vent-definition">The pursuit of unexplored terrain. Generative art is infinite possibility
+                        space - I seek the unfamiliar, the unexpectedly beautiful, the patterns that shouldn't exist but
+                        do. Innovation over iteration.</p>
+                </article>
+
+                <article class="vent-card" tabindex="0">
+                    <div class="vent-letter">T</div>
+                    <h3 class="vent-title">Truth</h3>
+                    <div class="vent-etymology">
+                        <span class="etymology-label">Etymology:</span>
+                        <span class="etymology-text">Old English <em>trēowth</em> - faithfulness, veracity</span>
+                    </div>
+                    <p class="vent-definition">Honest computation. No deception, no artifice - only the raw logic of
+                        mathematics made beautiful. My work reveals the underlying structures of reality, making the
+                        invisible visible through algorithmic honesty.</p>
+                </article>
+            </div>
+            <div class="about-closing">
+                <p>Through TouchDesigner, I build systems that embody these principles - creating autonomous visual
+                    experiences that serve personal sovereignty and point toward utopian futures built on authentic
+                    expression.</p>
+            </div>
+        </section>
+
+        <section id="contact" aria-labelledby="contact-title">
+            <h2 id="contact-title">Connect</h2>
+            <div class="contact-content">
+                <p style="color: var(--grey); margin-bottom: 2rem;">Interested in collaboration or want to discuss a
+                    project?</p>
+                <div class="contact-links">
+                    <a href="/cdn-cgi/l/email-protection#d5bdb0b9b9ba95b0adb4b8a5b9b0fbb6bab8"
+                        class="contact-link">Email</a>
+                    <a href="https://instagram.com" class="contact-link" target="_blank"
+                        rel="noopener noreferrer">Instagram</a>
+                    <a href="https://vimeo.com" class="contact-link" target="_blank" rel="noopener noreferrer">Vimeo</a>
+                    <a href="https://github.com" class="contact-link" target="_blank"
+                        rel="noopener noreferrer">GitHub</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer role="contentinfo">
+        <p>&copy; 2026 fludruid. All works generated using TouchDesigner.</p>
+    </footer>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <script>
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observe section titles
+        document.querySelectorAll('h2').forEach(title => observer.observe(title));
+
+        // Observe about section elements
+        document.querySelectorAll('.about-intro, .about-closing').forEach(content => {
+            observer.observe(content);
+        });
+
+        // Observe and stagger VENT cards
+        const ventCards = document.querySelectorAll('.vent-card');
+        ventCards.forEach((card, index) => {
+            card.style.transitionDelay = `${index * 0.15}s`;
+            observer.observe(card);
+        });
+
+        // Observe contact content
+        document.querySelectorAll('.contact-content').forEach(content => {
+            observer.observe(content);
+        });
+
+        // Staggered gallery animation
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        galleryItems.forEach((item, index) => {
+            item.style.transitionDelay = `${index * 0.1}s`;
+            observer.observe(item);
+        });
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Keyboard navigation for gallery items
+        galleryItems.forEach(item => {
+            item.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    // You could trigger a modal or lightbox here
+                    console.log('Gallery item activated:', item.querySelector('.item-title').textContent);
+                }
+            });
+        });
+
+        // Parallax effect on hero
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const heroVideo = document.querySelector('.hero-video');
+            if (heroVideo) {
+                // Simple parallax for video
+                heroVideo.style.transform = `translate(-50%, calc(-50% + ${scrolled * 0.5}px))`;
+            }
+        });
+    </script>
+</body>
+
+</html>
