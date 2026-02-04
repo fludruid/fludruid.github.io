@@ -253,7 +253,7 @@
             line-height: 1.1;
             letter-spacing: 0.1em;
             text-transform: uppercase;
-            animation: fadeInUp 1s ease 0.2s backwards;
+            animation: fadeInUpCentered 1s ease 0.2s backwards;
         }
 
         .subtitle {
@@ -261,7 +261,7 @@
             color: white;
             font-weight: 300;
             letter-spacing: 0.05em;
-            animation: fadeInUp 1s ease 0.4s backwards;
+            animation: fadeInUpCentered 1s ease 0.4s backwards;
             /* Offset downwards from center */
             margin-top: 10rem;
         }
@@ -275,6 +275,18 @@
             to {
                 opacity: 1;
                 transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUpCentered {
+            from {
+                opacity: 0;
+                transform: translate(-50%, calc(-50% + 30px));
+            }
+
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
             }
         }
 
@@ -309,7 +321,7 @@
             overflow: hidden;
             cursor: pointer;
             animation:
-                fadeInUp 1s ease 0.6s backwards,
+                fadeInUpCentered 1s ease 0.6s backwards,
                 gradientSlide 4s linear infinite;
         }
 
@@ -749,7 +761,7 @@
         </section>
 
         <section id="work" aria-labelledby="work-title">
-            <h2 id="work-title">Selected Work</h2>
+            <h2 id="work-title">My Work</h2>
             <div class="gallery-grid" role="list">
                 <article class="gallery-item" tabindex="0">
                     <video loop muted playsinline preload="metadata">
@@ -810,7 +822,7 @@
         </section>
 
         <section id="about" aria-labelledby="about-title">
-            <h2 id="about-title">Philosophy</h2>
+            <h2 id="about-title">My Philosophy</h2>
             <div class="about-intro">
                 <p>My work strongly resonates with 4 core values - a framework I call VENT.</p>
             </div>
