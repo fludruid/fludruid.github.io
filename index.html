@@ -752,56 +752,56 @@
             <h2 id="work-title">Selected Work</h2>
             <div class="gallery-grid" role="list">
                 <article class="gallery-item" tabindex="0">
-                    <video autoplay loop muted playsinline preload="metadata">
+                    <video loop muted playsinline preload="metadata">
                         <source src="/videos/work1.mp4" type="video/mp4">
                     </video>
                     <span class="item-title">TESSELLATION</span>
                 </article>
 
                 <article class="gallery-item" tabindex="0">
-                    <video autoplay loop muted playsinline preload="metadata">
+                    <video loop muted playsinline preload="metadata">
                         <source src="/videos/work2.mp4" type="video/mp4">
                     </video>
                     <span class="item-title">TUNNEL</span>
                 </article>
 
                 <article class="gallery-item" tabindex="0">
-                    <video autoplay loop muted playsinline preload="metadata">
+                    <video loop muted playsinline preload="metadata">
                         <source src="/videos/work3.mp4" type="video/mp4">
                     </video>
                     <span class="item-title">UNDULATION</span>
                 </article>
 
                 <article class="gallery-item" tabindex="0">
-                    <video autoplay loop muted playsinline preload="metadata">
+                    <video loop muted playsinline preload="metadata">
                         <source src="/videos/work4.mp4" type="video/mp4">
                     </video>
                     <span class="item-title">Work 4</span>
                 </article>
 
                 <article class="gallery-item" tabindex="0">
-                    <video autoplay loop muted playsinline preload="metadata">
+                    <video loop muted playsinline preload="metadata">
                         <source src="/videos/work5.mp4" type="video/mp4">
                     </video>
                     <span class="item-title">Work 5</span>
                 </article>
 
                 <article class="gallery-item" tabindex="0">
-                    <video autoplay loop muted playsinline preload="metadata">
+                    <video loop muted playsinline preload="metadata">
                         <source src="/videos/work6.mp4" type="video/mp4">
                     </video>
                     <span class="item-title">Work 6</span>
                 </article>
 
                 <article class="gallery-item" tabindex="0">
-                    <video autoplay loop muted playsinline preload="metadata">
+                    <video loop muted playsinline preload="metadata">
                         <source src="/videos/work7.mp4" type="video/mp4">
                     </video>
                     <span class="item-title">Work 7</span>
                 </article>
 
                 <article class="gallery-item" tabindex="0">
-                    <video autoplay loop muted playsinline preload="metadata">
+                    <video loop muted playsinline preload="metadata">
                         <source src="/videos/work8.mp4" type="video/mp4">
                     </video>
                     <span class="item-title">Work 8</span>
@@ -949,12 +949,37 @@
             });
         });
 
-        // Keyboard navigation for gallery items
+        // Gallery items interaction (hover/focus to play)
         galleryItems.forEach(item => {
+            const video = item.querySelector('video');
+
+            // Helper to safe play
+            const playVideo = () => {
+                if (video && video.paused) {
+                    video.play().catch(e => console.log('Playback failed:', e));
+                }
+            };
+
+            // Helper to safe pause and reset
+            const stopVideo = () => {
+                if (video) {
+                    video.pause();
+                    video.currentTime = 0; // Reset to start for fresh preview on next hover
+                }
+            };
+
+            // Mouse interactions
+            item.addEventListener('mouseenter', playVideo);
+            item.addEventListener('mouseleave', stopVideo);
+
+            // Keyboard focus interactions
+            item.addEventListener('focus', playVideo);
+            item.addEventListener('blur', stopVideo);
+
+            // Keep existing keydown for activation
             item.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    // You could trigger a modal or lightbox here
                     console.log('Gallery item activated:', item.querySelector('.item-title').textContent);
                 }
             });
